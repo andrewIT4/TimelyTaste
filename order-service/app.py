@@ -20,6 +20,6 @@ except:
           'again later')
     sys.exit(1)
 
-# Get and initialise the UNIVERSITY Database
+# Get and initialise the COMP3122Project Database
 db = cluster.COMP3122Project
 app = Flask(__name__)
