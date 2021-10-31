@@ -1,4 +1,4 @@
-1. Overview of the Python flask application app.py
+1. Overview of the Python flask application auth.py
 
   1.1 The Python flask API accepts the following endpoints for the HTTP GET method:
      1.1.1 /login: Return a JWT token if login verification is successful
