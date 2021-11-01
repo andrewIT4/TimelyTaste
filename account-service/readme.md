@@ -13,6 +13,7 @@
         1.2.2 When signup process is failed, the error message "Error" will be prompted.	
 
 2. Instructions(Under Windows CMD/Linux Terminal):
+
       2.1 To start the MongoDB docker container inside the folder:
       
          docker-compose up
