@@ -13,12 +13,15 @@
         1.2.2 When signup process is failed, the error message "Error" will be prompted.	
 
 2. Instructions(Under Windows CMD/Linux Terminal):
-
-      2.1 To build the docker image student_svc with the Dockerfile inside the folder:
+      2.1 To start the MongoDB docker container inside the folder:
+      
+         docker-compose up
+	 
+      2.2 To build the docker image timelytaste_auth with the Dockerfile inside the folder:
       
          docker build . -t timelytaste_auth 
 
-      2.2 To run the docker image timelytaste_auth under a network connected to the MongoDB docker container:
+      2.3 To run the docker image timelytaste_auth under a network connected to the MongoDB docker container:
       
          docker run --rm --network project -e MONGO_USERNAME=comp3122 -e MONGO_PASSWORD=12345 -e MONGO_SERVER_HOST='mongo' -e  MONGO_SERVER_PORT='27017' -p 5000:15000   timelytaste_auth
 			
