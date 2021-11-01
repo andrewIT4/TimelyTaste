@@ -1,12 +1,16 @@
 1. Overview of the Python flask application auth.py
 
    1.1 The Python flask API accepts the following endpoints for the HTTP GET method:
-     1.1.1 /login: Return a JWT token if login verification is successful
-     1.1.2 /signup:  Return a JWT token if signup is successful
+     
+        1.1.1 /login: Return a JWT token if login verification is successful
+     
+        1.1.2 /signup:  Return a JWT token if signup is successful
     
    1.2 The Error Handling 
-     1.2.1 For the endpoints stated in 1.1, a JSON object of the error message "Bad username or password" will be returned when there is no any matching login record is              found
-     1.2.2 When signup process is failed, the error message "Error" will be prompted.	
+     
+        1.2.1 For the endpoints stated in 1.1.1, a JSON object of the error message "Bad username or password" will be returned when there is no any matching login record is found
+     
+        1.2.2 When signup process is failed, the error message "Error" will be prompted.	
 
 2. Instructions(Under Windows CMD/Linux Terminal):
 
