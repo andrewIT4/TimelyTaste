@@ -3,10 +3,10 @@ from pymongo import MongoClient
 import os
 import sys
 
-username = os.getenv('MONGO_USERNAME')
-password = os.getenv('MONGO_PASSWORD')
-hostAddress = os.getenv('MONGO_SERVER_HOST')
-port = os.getenv('MONGO_SERVER_PORT')
+# username = os.getenv('MONGO_USERNAME')
+# password = os.getenv('MONGO_PASSWORD')
+# hostAddress = os.getenv('MONGO_SERVER_HOST')
+# port = os.getenv('MONGO_SERVER_PORT')
 
 CONNECTION_STRING = f'mongodb://{username}:{password}@{hostAddress}:{port}'
 
