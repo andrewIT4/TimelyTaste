@@ -73,7 +73,7 @@ def get_stores(store_id):
 @app.route('/stores', methods=['POST'])
 def create_store():
     data = request.json
-    store = data.find_one({"store_id": data})  # query by specified username
+    store = db.store.find_one({"store_id": data})  # query by specified username
     if store:  # user exists
         return jsonify({"msg": "Store already exists"}), 401
     try:
