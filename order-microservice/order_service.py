@@ -58,7 +58,6 @@ def update_order(order_id):
 # delete order
 @app.route('/order/<order_id>', methods=['DELETE'])
 def delete_order(order_id):
-
     return 1
 
 
