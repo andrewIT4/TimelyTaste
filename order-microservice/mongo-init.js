@@ -1,6 +1,7 @@
 db.auth('comp3122', '12345')
 db = db.getSiblingDB('order_service')
 
+
 db.createCollection('cart');
 
 db.cart.insertOne({'entity_id':'1', 'customer_id':'432', 'product_ids':[1, 5, 7, 5]});
