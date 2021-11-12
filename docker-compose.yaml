@@ -50,6 +50,19 @@ services:
       - mongo
     restart: on-failure
 
+  account_service:
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: 'mongo'
+      MONGO_SERVER_PORT: '27017'
+    build: ./account_service
+    ports:
+      - 15002:15002
+    links:
+      - mongo
+    restart: on-failure
+    
 networks:
   default:
     name: project
