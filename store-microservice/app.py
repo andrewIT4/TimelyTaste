@@ -31,23 +31,15 @@ db = cluster.store_db
 app = Flask(__name__)
 
 
-def storesResultToList(stores):
-    result = []  # initialise empty result list
-    # Convert the query result records into a single object and append into the result list one by one
-    for s in stores:
-        result.append({'store_id': s['store_id'],
-                       'store_name': s['store_name']
-                       })
-    return result
-
-
 @app.route('/stores', methods=['GET'])
 def get_stores():
-    stores = db.store.find({}, {'_id': 0}).sort("store_id", 1)
-    result = storesResultToList(stores)
-
+    output = []
+    result = list(db.store.find({}, {'_id': 0}).sort("store_id", 1))
     # If the list is not empty
     if len(result) > 0:
+        for x in result:
+            print(x, flush=True)
+            output.append(x)
         # Convert the list of records into json format and return
         return jsonify(result), 200
     else:  # If the list is empty
@@ -57,12 +49,13 @@ def get_stores():
 
 @app.route('/stores/<store_id>)', methods=['GET'])
 def get_stores(store_id):
+    output = []
     query = {'store_id': store_id}
-    stores = db.store.find(query, {'_id': 0}).sort("store_id", 1)
-    result = storesResultToList(stores)
-
-    # If the list is not empty
+    result = db.store.find(query, {'_id': 0}).sort("store_id", 1)
     if len(result) > 0:
+        for x in result:
+            print(x, flush=True)
+            output.append(x)
         # Convert the list of records into json format and return
         return jsonify(result), 200
     else:  # If the list is empty
@@ -72,55 +65,60 @@ def get_stores(store_id):
 
 @app.route('/stores', methods=['POST'])
 def create_store():
-    data = request.json
-    store = db.store.find_one({"store_id": data})  # query by specified username
-    if store:  # user exists
-        return jsonify({"msg": "Store already exists"}), 401
     try:
+        data = request.json
+        store = db.store.find_one({"store_id": data['store_id']})
+        if store is not None:
+            return jsonify({"msg": "Store already exists"}), 401
         query = {
             'store_id': data['store_id'],
             'store_name': data['store_name']
         }
         db.store.insert_one(query)
         return jsonify({"message", "Store created Successfully"}), 201
+    except KeyError:
+        return jsonify({'message': 'Key Value is missing'}), 422
     except:
-        abort(405)
+        return jsonify({'message': 'No json body received'}), 400
 
 
 @app.route('/stores/<store_id>', methods=['PUT'])
 def update_store(store_id):
-    data = request.json
-    query = {
-        'store_id': store_id
-    }
-    newValues = {
-        "$set": {
-            'store_name': data['store_name']
+    try:
+        data = request.json
+        query = {
+            'store_id': store_id
         }
-    }
-    result = db.store.update_one(query,newValues)
-    if result.modified_count > 0:
-        return jsonify({"message", "Store delete Successfully"}), 202
-    else:
-        return jsonify({"message", "No such store data"}), 404
+        newValues = {
+            "$set": {
+                'store_name': data['store_name']
+            }
+        }
+        result = db.store.update_one(query, newValues)
+        if result.modified_count > 0:
+            return jsonify({"message", "Store delete Successfully"}), 202
+        else:
+            return jsonify({"message", "No such store data"}), 404
+    except KeyError:  # missing student id
+        return jsonify({'message': 'Student id is missing'}), 422
+    except:
+        return jsonify({'message': 'No json body received'}), 400
 
 
 @app.route('/stores/<store_id>', methods=['DELETE'])
 def delete_store(store_id):
-    query = {
-        'store_id': store_id
-    }
-    result = db.store.delete_one(query)
-    if result.count > 0:
-        return jsonify({"message", "Store delete Successfully"}), 202
-    else:
-        return jsonify({"message", "No such store data"}), 404
+    try:
+        query = {
+            'store_id': store_id
+        }
+        result = db.store.delete_one(query)
+        if result.count > 0:
+            return jsonify({"message", "Store delete Successfully"}), 202
+        else:
+            return jsonify({"message", "No such store data"}), 404
+    except:
+        return jsonify({"message": "unknown error"}), 501
 
-
-@app.errorhandler(405)
-def error_405(error):
-    response = dict(error="Error")
-    return jsonify(response), 405
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=15000, debug=True)
