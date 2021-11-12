@@ -51,7 +51,7 @@ def get_stores():
 def get_stores(store_id):
     output = []
     query = {'store_id': store_id}
-    result = db.store.find(query, {'_id': 0}).sort("store_id", 1)
+    result = list(db.store.find(query, {'_id': 0}).sort("store_id", 1))
     if len(result) > 0:
         for x in result:
             print(x, flush=True)
