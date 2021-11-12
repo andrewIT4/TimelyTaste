@@ -16,8 +16,19 @@ order = db['order']
 @app.route('/carts', methods=['GET'])
 @app.route('/cart/<cart_id>', methods=['GET'])
 def get_carts(cart_id=None):
-
-    return {}, 200
+    try:
+       all_carts=[]
+       if cart_id==None:
+          for c in cart.find({},{"_id": 0}).sort("entity_id", 1):
+              all_carts.append(c)
+          return json.dumps(all_carts, sort_keys=True), 200
+       else:
+          for c in cart.find({"entity_id": cart_id},{"_id": 0}).sort("entity_id", 1):
+              all_carts.append(c)
+          return json.dumps(all_carts, sort_keys=True), 200
+#Error Handling if no student records are found      
+    except:
+        abort(404)
 
 
 @app.route('/cart', methods=['POST'])
