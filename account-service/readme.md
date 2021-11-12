@@ -28,11 +28,11 @@
 			
 3. Testing Command(Under Windows CMD/Linux Terminal):
 	
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"wonderpp\",\"password\":\"123456789\"}" http://localhost:5000/login
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"wonderpp\",\"password\":\"123456789\"}" http://localhost:15002/login
 	
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:5000/signup 
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:15002/signup 
         
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:5000/login
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:15002/login
 	  
 4. References:
 
