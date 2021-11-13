@@ -6,6 +6,7 @@ db.order.insertOne({
     "order_id" : 1,
     "username" : "wonderpp",
     "store_id" : "a123",
+    "status" : "delivered",
     "menu": [
         {
             "menu_id": 1,
@@ -26,6 +27,7 @@ db.order.insertOne({
     "order_id" : 2,
     "username" : "hahamen",
     "store_id" : "a123",
+    "status" : "delivered",
     "menu": [
         {
             "menu_id": 2,
@@ -46,6 +48,7 @@ db.order.insertOne({
     "order_id" : 3,
     "store_id" : "a123"  ,
     "username" : "yoholl",
+    "status" : "shipping",
     "menu": [
         {
             "menu_id": 1,
@@ -76,6 +79,7 @@ db.order.insertOne({
     "order_id" : 4,
     "username" : "bilebara",
     "store_id" : "b456",
+    "status" : "cancelled",
     "menu": [
         {
             "menu_id": 1,
@@ -106,6 +110,7 @@ db.order.insertOne({
     "order_id" : 5,
     "username" : "wword555",
     "store_id" : "b456",
+    "status" : "unpaid",
     "menu": [
         {
             "menu_id": 2,
