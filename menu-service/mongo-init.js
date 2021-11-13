@@ -19,7 +19,7 @@ db.menu.insertOne({
             "menu_id": 3,
             "food_name": "Double CheeseBurger",
             "price": 16
-        },
+        }
     ],
     "drinks":[
         {
