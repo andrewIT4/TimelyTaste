@@ -1,0 +1,2 @@
+172.20.0.1 - - xxx[13/Nov/2021:08:55:33 +0000]xxx "GET /cart_api/carts HTTP/1.1" 200 336 "-" "curl/7.73.0"
+192.168.48.1 - - xxx[13/Nov/2021:11:08:11 +0000]xxx "GET /cart_api/carts HTTP/1.1" 200 336 "-" "curl/7.73.0"

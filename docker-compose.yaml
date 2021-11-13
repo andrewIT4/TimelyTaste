@@ -3,51 +3,71 @@ services:
 
   api_gateway:
     image: nginx:1.17.10
-    container_name: reverse_proxy_demo
+    container_name: nginx_api_gateway
     depends_on:
         - order_service
         - cart_service
     volumes:
       - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
+      - ./api_gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
+      - ./api_gateway/api_backends.conf:/etc/nginx/api_backends.conf
+      - ./api_gateway/api_json_errors.conf:/etc/nginx/api_json_errors.conf
+      - ./api_gateway/api_keys.conf:/etc/nginx/api_keys.conf
+      - ./api_gateway/api_conf.d:/etc/nginx/api_conf.d/
+      - ./api_gateway/log:/var/log/nginx/log/
     ports:
       - 80:80
 
-
-  mongo:
+  order_service_mongo:
     image: mongo
-    container_name: db
+    container_name: order_service_db
     environment:
       MONGO_INITDB_ROOT_USERNAME: comp3122
       MONGO_INITDB_ROOT_PASSWORD: 12345
       MONGO_INITDB_DATABASE: admin
     volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
-      - mongo_volume:/data/db
+      - ./order_service/order-mongo-init.js:/docker-entrypoint-initdb.d/order-mongo-init.js
+      - order_service_mongo_volume:/data/db
 
   order_service:
+    container_name: order_service
     environment:
       MONGO_USERNAME: comp3122
       MONGO_PASSWORD: 12345
-      MONGO_SERVER_HOST: 'mongo'
+      MONGO_SERVER_HOST: 'order_service_mongo'
       MONGO_SERVER_PORT: '27017'
     build: ./order_service
     ports:
       - 15000:15000
     links:
-      - mongo
+      - order_service_mongo
     restart: on-failure
 
+
+  cart_service_mongo:
+    image: mongo
+    container_name: cart_service_db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./cart_service/cart-mongo-init.js:/docker-entrypoint-initdb.d/cart-mongo-init.js
+      - cart_service_mongo_volume:/data/db
+
+
   cart_service:
+    container_name: cart_service
     environment:
       MONGO_USERNAME: comp3122
       MONGO_PASSWORD: 12345
-      MONGO_SERVER_HOST: 'mongo'
+      MONGO_SERVER_HOST: 'cart_service_mongo'
       MONGO_SERVER_PORT: '27017'
     build: ./cart_service
     ports:
       - 15001:15001
     links:
-      - mongo
+      - cart_service_mongo
     restart: on-failure
 
 networks:
@@ -55,5 +75,7 @@ networks:
     name: project
 
 volumes:
-  mongo_volume:
-    name: mongo_vol
+  order_service_mongo_volume:
+    name: order_service_mongo_vol
+  cart_service_mongo_volume:
+    name: cart_service_mongo_vol
