@@ -10,6 +10,7 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # specify the URL address by passing the environment variables for connection
 client = pymongo.MongoClient('mongodb://' + os.environ['MONGO_USERNAME'] + ':' + os.environ['MONGO_PASSWORD'] + '@' + os.environ['MONGO_SERVER_HOST'] + ':' + os.environ['MONGO_SERVER_PORT'] + '/' , authSource='admin')
 # specify the name of database
+
 db = client['cart_service']
 cart = db['cart']
 
@@ -130,7 +131,6 @@ def handle_exception(e):
 def method_not_allowed(e):
     error = {'error': 'the method is not allowed'}
     return jsonify(error), 405
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=15001, debug=True)
