@@ -8,6 +8,7 @@ services:
         - order_service
         - store_service
         - menu_service
+        - account_service
     volumes:
       - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
       - ./api_gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
@@ -18,6 +19,35 @@ services:
       - ./api_gateway/log:/var/log/nginx/log/
     ports:
       - 80:80
+
+
+  account_mongo:
+    image: mongo
+    container_name: account_mongo
+    command: mongod --port 20001
+    ports:
+      - "20001:20001"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./account_service/account-mongo-init.js:/docker-entrypoint-initdb.d/account-mongo-init.js
+      - account_mongo_volume:/data/db
+  
+  account_service:
+    build: ./account_service
+    container_name: account_service
+    ports:
+      - "15001:15001"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: account_mongo
+      MONGO_SERVER_PORT: 20001
+    depends_on:
+      - account_mongo
+    restart: on-failure
 
 
   store_mongo:
@@ -116,3 +146,5 @@ volumes:
     name: store_mongo_vol
   menu_mongo_volume:
     name: menu_mongo_vol
+  account_mongo_volume:
+    name: account_mongo_vol
