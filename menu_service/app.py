@@ -70,7 +70,7 @@ def create_menu():
         data = request.json
         menu = db.menu.find_one({"store_id": data['store_id']})
         if menu is not None:
-            return jsonify({"msg": "Store Menu already exists"}), 401
+            return jsonify({"msg": "Store Menu already exists"}), 403
         query = {
             'store_id': data['store_id'],
             'menus': data['menus'],
@@ -116,7 +116,9 @@ def delete_menu(store_id):
         }
         result = db.menu.delete_one(query)
         if result.deleted_count > 0:
-            return jsonify({"message": "Menu delete Successfully"}), 202
+            return jsonify({"message": "Menu delete Successfully"}), 200
+        elif result.matched_count > 0:
+            return jsonify({"message": "Menu datas are same"}), 409
         else:
             return jsonify({"message": "No such store data"}), 404
     except:
