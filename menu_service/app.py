@@ -100,6 +100,8 @@ def update_menu(store_id):
         result = db.menu.update_one(query, newValues)
         if result.modified_count > 0:
             return jsonify({"message": "Menu Update Successfully"}), 202
+        elif result.matched_count > 0:
+            return jsonify({"message": "Menu datas are same"}), 409
         else:
             return jsonify({"message": "No such store data"}), 404
     except KeyError:  # missing student id
@@ -117,8 +119,6 @@ def delete_menu(store_id):
         result = db.menu.delete_one(query)
         if result.deleted_count > 0:
             return jsonify({"message": "Menu delete Successfully"}), 200
-        elif result.matched_count > 0:
-            return jsonify({"message": "Menu datas are same"}), 409
         else:
             return jsonify({"message": "No such store data"}), 404
     except:
