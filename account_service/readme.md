@@ -14,25 +14,17 @@
 
 2. Instructions(Under Windows CMD/Linux Terminal):
 
-      2.1 To start the MongoDB docker container inside the folder:
+      2.1 To start the MongoDB and account_service docker containers inside the folder:
       
          docker-compose up
-	 
-      2.2 To build the docker image timelytaste_auth with the Dockerfile inside the folder:
-      
-         docker build . -t timelytaste_auth 
-
-      2.3 To run the docker image timelytaste_auth under a network connected to the MongoDB docker container:
-      
-         docker run --rm --network project -e MONGO_USERNAME=comp3122 -e MONGO_PASSWORD=12345 -e MONGO_SERVER_HOST='mongo' -e  MONGO_SERVER_PORT='27017' -p 5000:15000   timelytaste_auth
 			
 3. Testing Command(Under Windows CMD/Linux Terminal):
 	
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"wonderpp\",\"password\":\"123456789\"}" http://localhost:5000/login
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"wonderpp\",\"password\":\"123456789\"}" http://localhost:80/account_api/login
 	
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:5000/signup 
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:80/account_api/signup 
         
-	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:5000/login
+	curl -X POST -H "Content-Type: application/json" -d "{\"username\":\"jackytang\",\"password\":\"1234567890\"}"  http://localhost:80/account_api/login
 	  
 4. References:
 
