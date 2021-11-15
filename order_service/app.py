@@ -47,9 +47,9 @@ def get_orders(order_id=None):
 
 
 @app.route('/order_api/orders/<order_id>', methods=['GET'])
-def get_orders_by_id(order_id=None):
+def get_orders_by_id(order_id):
     output = []
-    query = {"order_id": int(order_id)}
+    query = {"order_id": order_id}
     result = list(db.order.find(query, {'_id': 0}).sort("order_id", 1))
     # If the list is not empty
     if len(result) > 0:
@@ -116,6 +116,23 @@ def get_delivered_orders():
         return jsonify({'error': 'order not found'}), 404
 
 
+# get the orders delivered
+@app.route('/order_api/orders/cancelled', methods=['GET'])
+def get_cancelled_orders():
+    output = []
+    query = {"status": "cancelled"}
+    result = list(db.order.find(query, {'_id': 0}).sort("order_id", 1))
+    # If the list is not empty
+    if len(result) > 0:
+        for x in result:
+            print(x, flush=True)
+            output.append(x)
+        # Convert the list of records into json format and return
+        return jsonify(result), 200
+    else:  # If the list is empty
+        # Convert the error message into json format and return
+        return jsonify({'error': 'order not found'}), 404
+
 # create order
 @app.route('/order_api/orders', methods=['POST'])
 def create_order():
@@ -123,8 +140,9 @@ def create_order():
         data = request.json
 
         result = list(db.order.find({}, {'_id': 0}).sort("order_id", 1))
+        order_id = str(len(result) + 1)
         query = {
-            'order_id': len(result) + 1,
+            'order_id': order_id,
             'username': data['username'],
             'store_id': data['store_id'],
             'status': 'unpaid',
@@ -146,13 +164,13 @@ def update_order(order_id):
     try:
         data = request.json
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         newValues = {
             "$set": {
                 'menu': data['menu'],
                 'drinks': data['drinks'],
-                'order_time': datetime.datetime.now()
+                'update_time': datetime.datetime.now()
             }
         }
         result = db.order.update_one(query, newValues)
@@ -175,7 +193,7 @@ def update_order_status(order_id):
     try:
         data = request.json
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         newValues = {
             "$set": {
@@ -202,7 +220,7 @@ def update_order_status(order_id):
 def delete_order(order_id):
     try:
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         result = db.order.delete_one(query)
         if result.deleted_count > 0:
