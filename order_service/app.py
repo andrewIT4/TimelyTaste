@@ -117,6 +117,23 @@ def get_delivered_orders():
         return jsonify({'error': 'order not found'}), 404
 
 
+# get the orders delivered
+@app.route('/order_api/orders/cancelled', methods=['GET'])
+def get_cancelled_orders():
+    output = []
+    query = {"status": "cancelled"}
+    result = list(db.order.find(query, {'_id': 0}).sort("order_id", 1))
+    # If the list is not empty
+    if len(result) > 0:
+        for x in result:
+            print(x, flush=True)
+            output.append(x)
+        # Convert the list of records into json format and return
+        return jsonify(result), 200
+    else:  # If the list is empty
+        # Convert the error message into json format and return
+        return jsonify({'error': 'order not found'}), 404
+
 # create order
 @app.route('/order_api/orders', methods=['POST'])
 def create_order():
@@ -124,8 +141,9 @@ def create_order():
         data = request.json
 
         result = list(db.order.find({}, {'_id': 0}).sort("order_id", 1))
+        order_id = str(len(result) + 1)
         query = {
-            'order_id': len(result) + 1,
+            'order_id': order_id,
             'username': data['username'],
             'store_id': data['store_id'],
             'status': 'unpaid',
@@ -153,7 +171,7 @@ def update_order(order_id):
             "$set": {
                 'menu': data['menu'],
                 'drinks': data['drinks'],
-                'order_time': datetime.datetime.now()
+                'update_time': datetime.datetime.now()
             }
         }
         result = db.order.update_one(query, newValues)

@@ -12,9 +12,7 @@ services:
     volumes:
       - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
       - ./api_gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
-      - ./api_gateway/api_backends.conf:/etc/nginx/api_backends.conf
       - ./api_gateway/api_json_errors.conf:/etc/nginx/api_json_errors.conf
-      - ./api_gateway/api_keys.conf:/etc/nginx/api_keys.conf
       - ./api_gateway/api_conf.d:/etc/nginx/api_conf.d/
       - ./api_gateway/log:/var/log/nginx/log/
     ports:
@@ -136,7 +134,7 @@ services:
     restart: on-failure
 
   prometheus:
-    image: prom/prometheus:v2.0.0
+    image: prom/prometheus
     ports:
       - "9090:9090"
     links:
