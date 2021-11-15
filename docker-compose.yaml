@@ -1,0 +1,186 @@
+version: "3.3"
+services:
+
+  api_gateway:
+    image: nginx:1.17.10
+    container_name: nginx_api_gateway
+    depends_on:
+        - order_service
+        - store_service
+        - menu_service
+        - account_service
+    volumes:
+      - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
+      - ./api_gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
+      - ./api_gateway/api_backends.conf:/etc/nginx/api_backends.conf
+      - ./api_gateway/api_json_errors.conf:/etc/nginx/api_json_errors.conf
+      - ./api_gateway/api_keys.conf:/etc/nginx/api_keys.conf
+      - ./api_gateway/api_conf.d:/etc/nginx/api_conf.d/
+      - ./api_gateway/log:/var/log/nginx/log/
+    ports:
+      - 81:80
+
+
+  account_mongo:
+    image: mongo
+    container_name: account_mongo
+    command: mongod --port 20001
+    ports:
+      - "20001:20001"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./account_service/account-mongo-init.js:/docker-entrypoint-initdb.d/account-mongo-init.js
+      - account_mongo_volume:/data/db
+  
+  account_service:
+    build: ./account_service
+    container_name: account_service
+    ports:
+      - "15001:15001"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: account_mongo
+      MONGO_SERVER_PORT: 20001
+    depends_on:
+      - account_mongo
+    restart: on-failure
+
+
+  store_mongo:
+    image: mongo
+    container_name: store_mongo
+    command: mongod --port 20002
+    ports:
+      - "20002:20002"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./store_service/store-mongo-init.js:/docker-entrypoint-initdb.d/store-mongo-init.js
+      - store_mongo_volume:/data/db
+
+  store_service:
+    build: ./store_service
+    container_name: store_service
+    ports:
+      - "15002:15002"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: store_mongo
+      MONGO_SERVER_PORT: 20002
+    depends_on:
+      - store_mongo
+    restart: on-failure
+
+  menu_mongo:
+    image: mongo
+    container_name: menu_mongo
+    command: mongod --port 20003
+    ports:
+      - "20003:20003"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./menu_service/menu-mongo-init.js:/docker-entrypoint-initdb.d/menu-mongo-init.js
+      - menu_mongo_volume:/data/db
+
+  menu_service:
+    build: ./menu_service
+    container_name: menu_service
+    ports:
+      - "15003:15003"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: menu_mongo
+      MONGO_SERVER_PORT: 20003
+    depends_on:
+      - menu_mongo
+    restart: on-failure
+
+  
+  order_mongo:
+    image: mongo
+    container_name: order_mongo
+    command: mongod --port 20004
+    ports:
+      - "20004:20004"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./order_service/order-mongo-init.js:/docker-entrypoint-initdb.d/order-mongo-init.js
+      - order_mongo_volume:/data/db
+
+  order_service:
+    build: ./order_service
+    container_name: order_service
+    ports:
+      - "15004:15004"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: order_mongo
+      MONGO_SERVER_PORT: 20004
+    depends_on:
+      - order_mongo
+    restart: on-failure
+
+  delivery_mongo:
+    image: mongo
+    container_name: delivery_mongo
+    command: mongod --port 20005
+    ports:
+      - "20005:20005"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./delivery_service/delivery-mongo-init.js:/docker-entrypoint-initdb.d/delivery-mongo-init.js
+      - delivery_mongo_volume:/data/db
+
+  delivery_service:
+    build: ./delivery_service
+    container_name: delivery_service
+    ports:
+      - "15005:15005"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: order_mongo
+      MONGO_SERVER_PORT: 20004
+    depends_on:
+      - delivery_mongo
+    restart: on-failure
+   
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+networks:
+  default:
+    name: project
+
+volumes:
+  order_mongo_volume:
+    name: order_mongo_vol
+  store_mongo_volume:
+    name: store_mongo_vol
+  menu_mongo_volume:
+    name: menu_mongo_vol
+  delivery_mongo_volume:
+    name: delivery_mongo_vol
+  account_mongo_volume:
+    name: account_mongo_vol

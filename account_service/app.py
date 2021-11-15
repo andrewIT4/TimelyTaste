@@ -25,7 +25,7 @@ conn =  pymongo.MongoClient(connStr)
 user_account = conn["user_account"]
 customer = user_account['customer']
 
-@app.route('/login', methods=['POST'])
+@app.route('/account_api/login', methods=['POST'])
 #@jwt_required
 def login():
     data = request.json
@@ -38,7 +38,7 @@ def login():
             access_token = create_access_token(identity=username)
             return jsonify(access_token=access_token)
     return jsonify({"msg": "Bad username or password"}), 401
-@app.route('/signup', methods=['POST'])
+@app.route('/account_api/signup', methods=['POST'])
 def signup(): 
     data = request.json
     username = data["username"]
@@ -61,4 +61,4 @@ def error_405(error):
     return jsonify(response), 405
 
 if __name__ == "__main__":  
-    app.run(host="0.0.0.0", port=15000, debug=True)
+    app.run(host="0.0.0.0", port=15001, debug=True)

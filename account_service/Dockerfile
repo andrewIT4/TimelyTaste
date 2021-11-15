@@ -11,4 +11,4 @@ COPY . /app
 RUN pip install -r requirements.txt
 
 # Run app.py when the container launches
-CMD ["python", "auth.py"]
+CMD ["python", "app.py"]
