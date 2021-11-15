@@ -170,7 +170,7 @@ def update_order(order_id):
             "$set": {
                 'menu': data['menu'],
                 'drinks': data['drinks'],
-                'order_time': datetime.datetime.now()
+                'update_time': datetime.datetime.now()
             }
         }
         result = db.order.update_one(query, newValues)
