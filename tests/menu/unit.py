@@ -1,6 +1,7 @@
 import requests
 import pytest
 
+
 def test_for_menu_without_store_id():
     response = requests.get("http://localhost:15003/menu_api/menus")
     assert response.status_code == 200
@@ -312,6 +313,7 @@ def test_for_update_menu_without_json():
     response = requests.put(f"http://localhost:15003/menu_api/menus/{storeid}")
     assert response.status_code == 400
 
+
 def test_for_update_menu_without_menu():
     storeid = "a123"
     json = {
@@ -326,6 +328,7 @@ def test_for_update_menu_without_menu():
     response = requests.put(f"http://localhost:15003/menu_api/menus/{storeid}", json=json)
     assert response.status_code == 422
 
+
 def test_for_update_menu_without_drinks():
     storeid = "a123"
     json = {
@@ -339,6 +342,5 @@ def test_for_update_menu_without_drinks():
     }
     response = requests.put(f"http://localhost:15003/menu_api/menus/{storeid}", json=json)
     assert response.status_code == 422
-
 
 # end of menu api testing

@@ -140,8 +140,9 @@ def create_order():
         data = request.json
 
         result = list(db.order.find({}, {'_id': 0}).sort("order_id", 1))
+        order_id = str(len(result) + 1)
         query = {
-            'order_id': len(result) + 1,
+            'order_id': order_id,
             'username': data['username'],
             'store_id': data['store_id'],
             'status': 'unpaid',
