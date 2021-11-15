@@ -18,7 +18,7 @@ services:
       - ./api_gateway/api_conf.d:/etc/nginx/api_conf.d/
       - ./api_gateway/log:/var/log/nginx/log/
     ports:
-      - 81:80
+      - 80:80
 
 
   account_mongo:
