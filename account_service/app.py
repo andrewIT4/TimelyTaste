@@ -29,7 +29,7 @@ customer = user_account['customer']
 @app.route('/account_api/accounts', methods=['GET'])
 def get_account():
     output = []
-    result = list(customer.find({}, {'_id': 0}).sort("store_id", 1))
+    result = list(customer.find({}, {'_id': 0}).sort("username", 1))
     # If the list is not empty
     if len(result) > 0:
         for x in result:
@@ -46,7 +46,7 @@ def get_account():
 def get_account_by_username(username):
     output = []
     query = {'username': username}
-    result = list(customer.find(query, {'_id': 0}).sort("store_id", 1))
+    result = list(customer.find(query, {'_id': 0}).sort("username", 1))
     if len(result) > 0:
         for x in result:
             print(x, flush=True)
@@ -88,7 +88,7 @@ def update_customer(username):
 
 
 @app.route('/account_api/accounts/<username>', methods=['DELETE'])
-def delete_store(username):
+def delete_customer(username):
     try:
         query = {
             'username': username
