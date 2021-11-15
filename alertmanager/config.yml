@@ -4,4 +4,4 @@ route:
 receivers:
     - name: 'pager'
       webhook_configs:
-      - url: https://api.pagertree.com/integration/int_cdvYTUv8O # PagerTree webhook url
+      - url: https://api.pagertree.com/integration/int_j7lV2pR3a # PagerTree webhook url
