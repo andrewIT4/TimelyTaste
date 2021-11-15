@@ -3,8 +3,10 @@ from pymongo import MongoClient
 import os
 import sys
 import datetime
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 # set this configuration key to true for pretty printing
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # specify the URL address by passing the environment variables for connection
@@ -27,7 +29,6 @@ except:
 
 # Get and initialise the COMP3122Project Database
 db = cluster.order_db
-app = Flask(__name__)
 
 
 @app.route('/order_api/orders', methods=['GET'])
@@ -116,23 +117,6 @@ def get_delivered_orders():
         return jsonify({'error': 'order not found'}), 404
 
 
-# get the orders delivered
-@app.route('/order_api/orders/cancelled', methods=['GET'])
-def get_cancelled_orders():
-    output = []
-    query = {"status": "cancelled"}
-    result = list(db.order.find(query, {'_id': 0}).sort("order_id", 1))
-    # If the list is not empty
-    if len(result) > 0:
-        for x in result:
-            print(x, flush=True)
-            output.append(x)
-        # Convert the list of records into json format and return
-        return jsonify(result), 200
-    else:  # If the list is empty
-        # Convert the error message into json format and return
-        return jsonify({'error': 'order not found'}), 404
-
 # create order
 @app.route('/order_api/orders', methods=['POST'])
 def create_order():
@@ -140,9 +124,8 @@ def create_order():
         data = request.json
 
         result = list(db.order.find({}, {'_id': 0}).sort("order_id", 1))
-        order_id = str(len(result) + 1)
         query = {
-            'order_id': order_id,
+            'order_id': len(result) + 1,
             'username': data['username'],
             'store_id': data['store_id'],
             'status': 'unpaid',
@@ -170,7 +153,7 @@ def update_order(order_id):
             "$set": {
                 'menu': data['menu'],
                 'drinks': data['drinks'],
-                'update_time': datetime.datetime.now()
+                'order_time': datetime.datetime.now()
             }
         }
         result = db.order.update_one(query, newValues)

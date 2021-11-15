@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import os
 import sys
 import requests
+from prometheus_flask_exporter import PrometheusMetrics
 
 username = os.getenv('MONGO_USERNAME')
 password = os.getenv('MONGO_PASSWORD')
@@ -30,6 +31,7 @@ except:
 # Get and initialise the COMP3122Project Database
 db = cluster.menu_db
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 
 @app.route('/menu_api/menus', methods=['GET'])
@@ -70,7 +72,7 @@ def create_menu():
         data = request.json
         menu = db.menu.find_one({"store_id": data['store_id']})
         if menu is not None:
-            return jsonify({"msg": "Store Menu already exists"}), 403
+            return jsonify({"msg": "Store Menu already exists"}), 401
         query = {
             'store_id': data['store_id'],
             'menus': data['menus'],
@@ -100,8 +102,6 @@ def update_menu(store_id):
         result = db.menu.update_one(query, newValues)
         if result.modified_count > 0:
             return jsonify({"message": "Menu Update Successfully"}), 202
-        elif result.matched_count > 0:
-            return jsonify({"message": "Menu datas are same"}), 409
         else:
             return jsonify({"message": "No such store data"}), 404
     except KeyError:  # missing student id
@@ -118,7 +118,7 @@ def delete_menu(store_id):
         }
         result = db.menu.delete_one(query)
         if result.deleted_count > 0:
-            return jsonify({"message": "Menu delete Successfully"}), 200
+            return jsonify({"message": "Menu delete Successfully"}), 202
         else:
             return jsonify({"message": "No such store data"}), 404
     except:

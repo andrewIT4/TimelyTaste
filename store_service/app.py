@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 import os
 import sys
-
+from prometheus_flask_exporter import PrometheusMetrics
 
 username = os.getenv('MONGO_USERNAME')
 password = os.getenv('MONGO_PASSWORD')
@@ -30,6 +30,7 @@ except:
 # Get and initialise the store_db Database
 db = cluster.store_db
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 
 @app.route('/store_api/stores', methods=['GET'])
@@ -70,7 +71,7 @@ def create_store():
         data = request.json
         store = db.store.find_one({"store_id": data['store_id']})
         if store is not None:
-            return jsonify({"msg": "Store already exists"}), 403
+            return jsonify({"msg": "Store already exists"}), 401
         query = {
             'store_id': data['store_id'],
             'store_name': data['store_name']
@@ -98,8 +99,6 @@ def update_store(store_id):
         result = db.store.update_one(query, newValues)
         if result.modified_count > 0:
             return jsonify({"message": "Store Updated Successfully"}), 202
-        elif result.matched_count > 0:
-            return jsonify({"message": "Store datas are same"}), 409
         else:
             return jsonify({"message": "No such store data"}), 404
     except KeyError:  # missing student id
@@ -116,7 +115,7 @@ def delete_store(store_id):
         }
         result = db.store.delete_many(query)
         if result.deleted_count > 0:
-            return jsonify({"message": "Store delete Successfully"}), 200
+            return jsonify({"message": "Store delete Successfully"}), 202
         else:
             return jsonify({"message": "No such store data"}), 404
     except:

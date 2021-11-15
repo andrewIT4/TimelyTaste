@@ -1,0 +1,22 @@
+apiVersion: 1
+
+providers:
+  # provider name
+- name: 'provider'
+  # org id
+  orgId: 1
+  # name of the dashboard folder
+  folder: 'food_service'
+  # folder UID
+  folderUid: ''
+  # provider type
+  type: file
+  # disable dashboard deletion
+  disableDeletion: false
+  # enable dashboard editing
+  editable: true
+  # how often Grafana will scan for changed dashboards
+  updateIntervalSeconds: 10
+  options:
+    # path to dashboard files
+    path: /etc/grafana/provisioning/dashboards

@@ -4,8 +4,10 @@ import json
 import os
 from flask_jwt_extended import JWTManager
 from flask_jwt_extended import create_access_token
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 jwt = JWTManager()
 
 #  set JWT secretkey
