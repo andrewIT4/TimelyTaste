@@ -3,8 +3,10 @@ from pymongo import MongoClient
 import os
 import sys
 import datetime
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 # set this configuration key to true for pretty printing
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # specify the URL address by passing the environment variables for connection
@@ -27,7 +29,6 @@ except:
 
 # Get and initialise the COMP3122Project Database
 db = cluster.order_db
-app = Flask(__name__)
 
 
 @app.route('/order_api/orders', methods=['GET'])

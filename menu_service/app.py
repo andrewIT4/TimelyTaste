@@ -3,6 +3,7 @@ from pymongo import MongoClient
 import os
 import sys
 import requests
+from prometheus_flask_exporter import PrometheusMetrics
 
 username = os.getenv('MONGO_USERNAME')
 password = os.getenv('MONGO_PASSWORD')
@@ -30,6 +31,7 @@ except:
 # Get and initialise the COMP3122Project Database
 db = cluster.menu_db
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 
 @app.route('/menu_api/menus', methods=['GET'])

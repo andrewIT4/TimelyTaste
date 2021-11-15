@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from pymongo import MongoClient
 import os
 import sys
-
+from prometheus_flask_exporter import PrometheusMetrics
 
 username = os.getenv('MONGO_USERNAME')
 password = os.getenv('MONGO_PASSWORD')
@@ -30,6 +30,7 @@ except:
 # Get and initialise the store_db Database
 db = cluster.store_db
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 
 
 @app.route('/store_api/stores', methods=['GET'])

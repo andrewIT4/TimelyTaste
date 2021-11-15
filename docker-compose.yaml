@@ -9,16 +9,15 @@ services:
         - store_service
         - menu_service
         - account_service
+        - delivery_service
     volumes:
       - ./api_gateway/nginx.conf:/etc/nginx/nginx.conf
       - ./api_gateway/api_gateway.conf:/etc/nginx/api_gateway.conf
-      - ./api_gateway/api_backends.conf:/etc/nginx/api_backends.conf
       - ./api_gateway/api_json_errors.conf:/etc/nginx/api_json_errors.conf
-      - ./api_gateway/api_keys.conf:/etc/nginx/api_keys.conf
       - ./api_gateway/api_conf.d:/etc/nginx/api_conf.d/
       - ./api_gateway/log:/var/log/nginx/log/
     ports:
-      - 80:80
+      - 8080:8080
 
 
   account_mongo:
@@ -135,6 +134,80 @@ services:
       - order_mongo
     restart: on-failure
 
+  delivery_mongo:
+    image: mongo
+    container_name: delivery_mongo
+    command: mongod --port 20005
+    ports:
+      - "20005:20005"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: comp3122
+      MONGO_INITDB_ROOT_PASSWORD: 12345
+      MONGO_INITDB_DATABASE: admin
+    volumes:
+      - ./delivery_service/delivery-mongo-init.js:/docker-entrypoint-initdb.d/delivery-mongo-init.js
+      - delivery_mongo_volume:/data/db
+
+  delivery_service:
+    build: ./delivery_service
+    container_name: delivery_service
+    ports:
+      - "15005:15005"
+    environment:
+      MONGO_USERNAME: comp3122
+      MONGO_PASSWORD: 12345
+      MONGO_SERVER_HOST: delivery_mongo
+      MONGO_SERVER_PORT: 20005
+    depends_on:
+      - delivery_mongo
+    restart: on-failure
+   
+  rabbitmq:
+    image: 'rabbitmq:3.6-management-alpine'
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    links:
+      - alertmanager
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+
+  alertmanager:
+    image: prom/alertmanager:v0.12.0
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./alertmanager/:/etc/alertmanager/
+    restart: on-failure
+    command:
+      - '-config.file=/etc/alertmanager/config.yml'
+      - '-storage.path=/alertmanager'
+
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter
+    ports:
+    - "9113:9113"
+    environment:
+      SCRAPE_URI: "http://api_gateway:8080/stub_status"
+    restart: on-failure
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: comp3122
+      GF_SECURITY_ADMIN_PASSWORD: 12345
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources/
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards/
+
 networks:
   default:
     name: project
@@ -148,3 +221,5 @@ volumes:
     name: menu_mongo_vol
   account_mongo_volume:
     name: account_mongo_vol
+  delivery_mongo_volume:
+    name: delivery_mongo_vol
