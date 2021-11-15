@@ -175,7 +175,7 @@ def test_for_update_customer_without_lastname():
 
 
 def test_for_update_customer_without_location():
-    username = "gotFired:("
+    username = "admin2"
     json = {
         "credit_no": "2",
         "firstname": "admin2",
@@ -187,7 +187,7 @@ def test_for_update_customer_without_location():
 
 
 def test_for_update_customer_without_role():
-    username = "gotFired:("
+    username = "admin2"
     json = {
         "credit_no": "25455151515",
         "firstname": "admin2",
