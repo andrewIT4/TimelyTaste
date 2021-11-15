@@ -3,8 +3,10 @@ from pymongo import MongoClient
 import os
 import sys
 import datetime
+from prometheus_flask_exporter import PrometheusMetrics
 
 app = Flask(__name__)
+metrics = PrometheusMetrics(app)
 # set this configuration key to true for pretty printing
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 # specify the URL address by passing the environment variables for connection
@@ -27,7 +29,6 @@ except:
 
 # Get and initialise the COMP3122Project Database
 db = cluster.order_db
-app = Flask(__name__)
 
 
 @app.route('/order_api/orders', methods=['GET'])
@@ -47,9 +48,9 @@ def get_orders(order_id=None):
 
 
 @app.route('/order_api/orders/<order_id>', methods=['GET'])
-def get_orders_by_id(order_id=None):
+def get_orders_by_id(order_id):
     output = []
-    query = {"order_id": int(order_id)}
+    query = {"order_id": order_id}
     result = list(db.order.find(query, {'_id': 0}).sort("order_id", 1))
     # If the list is not empty
     if len(result) > 0:
@@ -146,7 +147,7 @@ def update_order(order_id):
     try:
         data = request.json
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         newValues = {
             "$set": {
@@ -175,7 +176,7 @@ def update_order_status(order_id):
     try:
         data = request.json
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         newValues = {
             "$set": {
@@ -202,7 +203,7 @@ def update_order_status(order_id):
 def delete_order(order_id):
     try:
         query = {
-            'order_id': int(order_id)
+            'order_id': order_id
         }
         result = db.order.delete_one(query)
         if result.deleted_count > 0:

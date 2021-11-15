@@ -1,3 +1,4 @@
 flask
 pymongo
 flask-jwt-extended
+prometheus-flask-exporter

@@ -10,5 +10,11 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install -r requirements.txt
 
+# edit the 3 environment variables and inform Docker that the container listens on 15003 at runtime
+ENV FLASK_APP=app.py
+ENV FLASK_RUN_HOST=0.0.0.0
+ENV FLASK_RUN_PORT=15003
+EXPOSE 15003
+
 # Run app.py when the container launches
-CMD ["python", "app.py"]
+CMD ["flask", "run"]
